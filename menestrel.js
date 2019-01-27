@@ -50,16 +50,15 @@ class Scenario {
       const nextPromise = this.queue.shift()
       promise = promise
         .then(() => nextPromise(_))
+        .then(() => this.draw(_))
     }
 
-    this.draw(_)
     return promise
   }
 
   draw(_) {
     _.clearRect(0, 0, _.canvas.width, _.canvas.height)
     this.actors.forEach(actor => actor.draw(_))
-    setTimeout(() => this.draw(_), 1000 / 60)
   }
 }
 
