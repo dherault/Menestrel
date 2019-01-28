@@ -1,0 +1,31 @@
+{
+  "name": "menestrel",
+  "version": "0.0.0",
+  "description": "A canvas storytelling librairy",
+  "main": "menestrel.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dherault/menestrel_2.git"
+  },
+  "keywords": [
+    "storytelling",
+    "canvas"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dherault/menestrel_2/issues"
+  },
+  "homepage": "https://github.com/dherault/menestrel_2#readme",
+  "dependencies": {
+    "bluebird": "^3.5.3"
+  },
+  "devDependencies": {
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1"
+  }
+}
