@@ -70,9 +70,11 @@ class Scenario {
 
     setInterval(() => {
       let nextStep = this.queue[0]
-      if (nextStep) {
-        while (nextStep && promise.isFulfilled()) {
-          nextStep = this.queue.shift()
+
+      while (nextStep && promise.isFulfilled()) {
+        nextStep = this.queue.shift()
+
+        if (typeof nextStep === 'function') {
           promise = nextStep(_)
         }
       }
