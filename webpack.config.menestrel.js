@@ -5,6 +5,6 @@ module.exports = {
   entry: './menestrel.js',
   output: {
     filename: 'menestrel.min.js',
-    path: path.resolve(__dirname, 'dist')
+    path: __dirname
   }
 };
