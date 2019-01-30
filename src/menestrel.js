@@ -33,7 +33,7 @@ export class Scenario {
   unmount(actor) {
     this.queue.push(() => {
       console.log('unmounting')
-      
+
       this.actorsBinarySearchTree.remove(actor)
 
       return Promise.resolve()
@@ -68,7 +68,7 @@ export class Scenario {
       // TODO: know when to ;
       _.clearRect(0, 0, _.canvas.width, _.canvas.height)
 
-      this.actors.forEach(actor => {
+      this.actorsBinarySearchTree.traverse(actor => {
         actor.iteration++
 
         if (actor.iteration * 50 / 3 > actor.animationDuration) {

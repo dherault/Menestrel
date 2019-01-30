@@ -8,7 +8,7 @@ class Node {
   }
 }
 
-class BinarySearchTree {
+export default class BinarySearchTree {
   constructor() {
     this.root = null
     this.size = 0
@@ -50,13 +50,30 @@ class BinarySearchTree {
 
   remove(data) {
     const node = this.findNodeByData(data)
-    const side = node.parent.left === node ? 'left' : 'right'
 
-    console.log('remove', node)
+    if (node === null) return
 
+    this.size--
+
+    // Deleting the root
     if (node === this.root) {
-      
+      if (this.size === 0) {
+        this.root = null
+        return
+      }
+
+      const minNode = this.findMinNode(node.right) || node.left
+
+      node.value = minNode.value
+      node.data = minNode.data
+
+      if (minNode.parent.left === minNode) minNode.parent.left = null
+      else minNode.parent.right = null
+
+      return
     }
+
+    const side = node.parent.left === node ? 'left' : 'right'
 
     // Deleting node without children
     if (node.left === null && node.right === null) {
@@ -115,16 +132,3 @@ class BinarySearchTree {
     }
   }
 }
-
-let bst = new BinarySearchTree()
-
-bst.insert(4,4)
-bst.insert(2,2)
-bst.insert(17,17)
-bst.insert(15, 15)
-bst.insert(3,3)
-bst.insert(9,9)
-bst.insert(12,12)
-bst.insert(1,1)
-
-console.log(bst)
