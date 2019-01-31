@@ -2,10 +2,10 @@ import * as Promise from 'bluebird'
 import BinarySearchTree from './BinarySearchTree'
 
 export class Actor {
-  constructor(props, draw) {
-    this.animationDuration = props.animationDuration || 1
-    this.zIndex = null
+  constructor(draw, props = {}) {
     this.draw = draw
+    this.zIndex = props.zIndex
+    this.animationDuration = props.animationDuration || 0
   }
 }
 
@@ -39,6 +39,8 @@ export class Scenario {
     })
   }
 
+
+
   wait(duration) {
     this.queue.push(() => new Promise(resolve => {
       console.log('waiting')
@@ -60,6 +62,7 @@ export class Scenario {
 
     const runStep = () => {
       let nextStep = this.queue[0]
+
       while (nextStep && promise.isFulfilled()) {
         nextStep = this.queue.shift()
 
@@ -71,7 +74,7 @@ export class Scenario {
       _.clearRect(0, 0, _.canvas.width, _.canvas.height)
 
       this.actorsBinarySearchTree.traverse(actor => {
-        actor.draw(_, (Date.now() - startTime) % actor.animationDuration)
+        actor.draw(_, actor.animationDuration === 0 ? 0 : (Date.now() - startTime) % actor.animationDuration)
       })
 
       requestAnimationFrame(runStep)
