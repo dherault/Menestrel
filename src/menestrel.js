@@ -3,8 +3,7 @@ import BinarySearchTree from './BinarySearchTree'
 
 export class Actor {
   constructor(props, draw) {
-    this.iteration = 0
-    this.animationDuration = props.animationDuration
+    this.animationDuration = props.animationDuration || 1
     this.zIndex = null
     this.draw = draw
   }
@@ -50,15 +49,16 @@ export class Scenario {
   call(fn) {
     this.queue.push(_ => {
       console.log('calling')
-      
+
       return Promise.resolve(fn(_))
     })
   }
 
   run(_) {
     let promise = Promise.resolve()
+    const startTime = Date.now()
 
-    setInterval(() => {
+    const runStep = () => {
       let nextStep = this.queue[0]
       while (nextStep && promise.isFulfilled()) {
         nextStep = this.queue.shift()
@@ -68,19 +68,16 @@ export class Scenario {
         }
       }
 
-      // TODO: know when to ;
       _.clearRect(0, 0, _.canvas.width, _.canvas.height)
 
       this.actorsBinarySearchTree.traverse(actor => {
-        actor.iteration++
-
-        if (actor.iteration * 50 / 3 > actor.animationDuration) {
-          actor.iteration = 1
-        }
-
-        actor.draw(_, actor.iteration * 50 / 3)
+        actor.draw(_, (Date.now() - startTime) % actor.animationDuration)
       })
-    }, 50 / 3)
+
+      requestAnimationFrame(runStep)
+    }
+
+    requestAnimationFrame(runStep)
   }
 }
 
