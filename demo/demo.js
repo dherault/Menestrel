@@ -1,4 +1,4 @@
-import { menestrel, Actor, Scenario } from '../menestrel.min.js'
+import { menestrel, Actor, Scenario } from '../src/menestrel.js'
 
 // Describe actors
 const actor1 = new Actor(0, _ => {
@@ -12,10 +12,11 @@ const actor2 = new Actor(1000, _ => {
 // Describe scenario
 const scenario = new Scenario(_ => {
   _.mount(actor1)
-  _.call(() => Promise.resolve(console.log('called')))
+  _.call(() => console.log('called'))
   _.wait(1000)
   _.unmount(actor1)
-  _.wait(1000, () => new Promise(resolve => setTimeout(resolve, 1000)))
+  _.wait(1000)
+  _.call(() => new Promise(r => setTimeout(r, 1000)))
   _.mount(actor1)
 })
 

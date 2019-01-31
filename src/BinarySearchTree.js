@@ -4,7 +4,6 @@ class Node {
     this.data = data
     this.left = null
     this.right = null
-    this.parent = null
   }
 }
 
@@ -31,7 +30,6 @@ export default class BinarySearchTree {
     if (newNode.value < node.value) {
       if (node.left === null) {
         node.left = newNode
-        newNode.parent = node
       }
       else {
         this.insertNode(node.left, newNode)
@@ -40,7 +38,6 @@ export default class BinarySearchTree {
     else {
       if (node.right === null) {
         node.right = newNode
-        newNode.parent = node
       }
       else {
         this.insertNode(node.right, newNode)
@@ -49,7 +46,7 @@ export default class BinarySearchTree {
   }
 
   remove(data) {
-    const node = this.findNodeByData(data)
+    const [node, parent] = this.findNodeByData(data)
 
     if (node === null) return
 
@@ -62,66 +59,67 @@ export default class BinarySearchTree {
         return
       }
 
-      const minNode = this.findMinNode(node.right) || node.left
+      const minNode = node.right ? this.findMinNode(node.right)[0] : node.left
+
+      if (minNode === node.left) {
+        this.root = node.left
+        return
+      }
 
       node.value = minNode.value
       node.data = minNode.data
-
-      if (minNode.parent.left === minNode) minNode.parent.left = null
-      else minNode.parent.right = null
-
+      node.right = minNode.right
       return
     }
 
-    const side = node.parent.left === node ? 'left' : 'right'
+    const side = parent.left === node ? 'left' : 'right'
 
     // Deleting node without children
     if (node.left === null && node.right === null) {
-      node.parent[side] = null
+      parent[side] = null
       return
     }
 
     // Deleting node with one children
     if (node.left === null) {
-      node.parent[side] = node.right
+      parent[side] = node.right
       return
     }
     else if (node.right === null) {
-      node.parent[side] = node.left
+      parent[side] = node.left
       return
     }
 
     // Deleting node with two children
     // minumum node of the right subtree
     // is stored in minNode
-    const minNode = this.findMinNode(node.right)
+    const [minNode, minNodeParent] = this.findMinNode(node.right, node)
     node.value = minNode.value
     node.data = minNode.data
 
-    if (minNode.parent.left === minNode) minNode.parent.left = null
-    else minNode.parent.right = null
+    if (minNodeParent.left === minNode) minNodeParent.left = null
+    else minNodeParent.right = null
   }
 
-  findNodeByData(data, node = this.root) {
-    if (node.data === data) return node
+  findNodeByData(data, node = this.root, parent=null) {
+    if (node.data === data) return [node, parent]
 
     if (node.left !== null) {
-      const nextNode = this.findNodeByData(data, node.left)
-      if (nextNode !== null) return nextNode
+      const [nextNode, nextParent] = this.findNodeByData(data, node.left, node)
+      if (nextNode !== null) return [nextNode, nextParent]
     }
     if (node.right !== null) {
-      const nextNode = this.findNodeByData(data, node.right)
-      if (nextNode !== null) return nextNode
+      const [nextNode, nextParent] = this.findNodeByData(data, node.right, node)
+      if (nextNode !== null) return [nextNode, nextParent]
     }
 
-    return null
+    return [null, null]
   }
 
-  findMinNode(node) {
-    console.log('findMinNode', node)
+  findMinNode(node, parent) {
     // if left of a node is null
     // then it must be minimum node
-    return node.left === null ? node : this.findMinNode(node.left)
+    return node.left === null ? [node, parent] : this.findMinNode(node.left, node)
   }
 
   traverse(fn, node = this.root) {
@@ -130,5 +128,9 @@ export default class BinarySearchTree {
       fn(node.data)
       this.traverse(fn, node.right)
     }
+  }
+
+  toString() {
+    return JSON.stringify(this, null, 2)
   }
 }

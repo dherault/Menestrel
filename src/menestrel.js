@@ -48,7 +48,11 @@ export class Scenario {
   }
 
   call(fn) {
-    this.queue.push(_ => fn(_))
+    this.queue.push(_ => {
+      console.log('calling')
+      
+      return Promise.resolve(fn(_))
+    })
   }
 
   run(_) {
@@ -56,7 +60,6 @@ export class Scenario {
 
     setInterval(() => {
       let nextStep = this.queue[0]
-
       while (nextStep && promise.isFulfilled()) {
         nextStep = this.queue.shift()
 

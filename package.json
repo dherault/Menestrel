@@ -4,7 +4,7 @@
   "description": "A canvas storytelling librairy",
   "main": "menestrel.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --require @babel/register",
     "build": "webpack --config webpack.config.menestrel.js",
     "build-demo": "webpack --config webpack.config.demo.js"
   },
@@ -26,6 +26,12 @@
     "bluebird": "^3.5.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/register": "^7.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1"
   }
