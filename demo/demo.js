@@ -6,12 +6,28 @@ const background = new Actor(_ => {
   _.fillRect(0, 0, _.canvas.width, _.canvas.height)
 })
 
-const title = new Actor(_ => {
-  _.font = '100px sans-serif'
+const title = new Actor((_, t) => {
+  _.globalAlpha = t / 2500
+  _.font = '105px sans-serif'
   _.fillStyle = 'white'
   _.textAlign = 'center'
   _.textBaseline = 'middle'
   _.fillText('Menestrel', _.canvas.width / 2, _.canvas.height / 2)
+  _.globalAlpha = 1
+}, {
+  animationDuration: 2500,
+})
+
+const subtitle = new Actor((_, t) => {
+  _.globalAlpha = t / 2500
+  _.font = '50px sans-serif'
+  _.fillStyle = 'white'
+  _.textAlign = 'center'
+  _.textBaseline = 'middle'
+  _.fillText('A storytelling librairy', _.canvas.width / 2, _.canvas.height / 2 + 70)
+  _.globalAlpha = 1
+}, {
+  animationDuration: 2500,
 })
 
 const star = new Actor((_, t) => {
@@ -22,19 +38,19 @@ const star = new Actor((_, t) => {
   _.setTransform(1, 0, 0, 1, 0, 0)
 }, {
   animationDuration: 2000,
+  animationLoop: true,
 })
 
 // Describe scenario
 const scenario = new Scenario(_ => {
+  // _.call(() => new Promise(resolve => setTimeout(resolve, 1000)))
+  // _.mount(star)
+  // _.call(() => console.log('called'))
   _.mount(background)
   _.mount(title)
-  _.mount(star)
-  _.call(() => console.log('called'))
+  _.wait(1500)
+  _.mount(subtitle)
   _.wait(1000)
-  _.unmount(title)
-  _.wait(1000)
-  _.call(() => new Promise(resolve => setTimeout(resolve, 1000)))
-  _.mount(title)
 })
 
 // Play scenario
