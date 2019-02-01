@@ -14,10 +14,11 @@ export class Actor {
 
 export class Scenario {
   constructor(stepsFunction) {
+    this.stepsFunction = stepsFunction
     this.queue = []
     this.actorsBinarySearchTree = new BinarySearchTree()
 
-    this._ = {
+    this.$ = {
       mount: actor => {
         this.queue.push(() => {
           console.log('mounting')
@@ -45,16 +46,27 @@ export class Scenario {
         }))
       },
 
+      awaitClick: (x, y, width, height, fn) => {
+        this.queue.push(_ => new Promise(resolve => {
+          console.log('await click')
+
+          _.canvas.addEventListener('click', ({ offsetX: px, offsetY: py }) => {
+            if (px >= x && px <= x + width && py >= y && py <= y + height) {
+              if (typeof fn === 'function') fn()
+              resolve()
+            }
+          })
+        }))
+      },
+
       call: fn => {
-        this.queue.push(_ => {
+        this.queue.push(() => {
           console.log('calling')
 
-          return Promise.resolve(fn(_))
+          return Promise.resolve(fn())
         })
       },
     }
-
-    stepsFunction(this._)
   }
 
   addActor(actor) {
@@ -107,5 +119,9 @@ export class Scenario {
 }
 
 export function menestrel(canvas, scenario) {
-  return scenario.run(canvas.getContext('2d'))
+  const _ = canvas.getContext('2d')
+
+  scenario.stepsFunction(scenario.$, _)
+
+  return scenario.run(_)
 }

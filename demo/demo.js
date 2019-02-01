@@ -12,7 +12,7 @@ const title = new Actor((_, t) => {
   _.fillStyle = 'white'
   _.textAlign = 'center'
   _.textBaseline = 'middle'
-  _.fillText('Menestrel', _.canvas.width / 2, _.canvas.height / 2)
+  _.fillText('Menestrel', _.canvas.width / 2, _.canvas.height / 2 - 50)
   _.globalAlpha = 1
 }, {
   animationDuration: 2500,
@@ -24,10 +24,17 @@ const subtitle = new Actor((_, t) => {
   _.fillStyle = 'white'
   _.textAlign = 'center'
   _.textBaseline = 'middle'
-  _.fillText('A storytelling librairy', _.canvas.width / 2, _.canvas.height / 2 + 70)
+  _.fillText('A storytelling librairy', _.canvas.width / 2, _.canvas.height / 2 + 70 - 50)
   _.globalAlpha = 1
 }, {
   animationDuration: 2500,
+})
+
+const startButtonImage = new Image()
+startButtonImage.src = 'demo/start.png'
+
+const startButton = new Actor(_ => {
+  _.drawImage(startButtonImage, _.canvas.width / 2 - 332 / 3, _.canvas.height / 2 - 129 / 3 + 130, 332 / 1.5, 129 / 1.5)
 })
 
 const star = new Actor((_, t) => {
@@ -42,16 +49,20 @@ const star = new Actor((_, t) => {
 })
 
 // Describe scenario
-const scenario = new Scenario(_ => {
-  // _.call(() => new Promise(resolve => setTimeout(resolve, 1000)))
-  // _.mount(star)
-  // _.call(() => console.log('called'))
-  _.mount(background)
-  _.mount(title)
-  _.wait(1500)
-  _.mount(subtitle)
-  _.wait(1000)
+const scenario = new Scenario(($, _) => {
+  $.mount(background)
+  $.mount(title)
+  $.wait(1500)
+  $.mount(subtitle)
+  $.wait(1000)
+  $.mount(startButton)
+  $.awaitClick(_.canvas.width / 2 - 332 / 3, _.canvas.height / 2 - 129 / 3 + 130, 332 / 1.5, 129 / 1.5)
+  $.unmount(title)
+  $.unmount(subtitle)
+  $.unmount(startButton)
 })
+
+
 
 // Play scenario
 const canvas = document.getElementById('canvas')
