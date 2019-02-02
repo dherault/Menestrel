@@ -56,13 +56,14 @@ const scenario = new Scenario(($, _) => {
   $.mount(subtitle)
   $.wait(1000)
   $.mount(startButton)
-  $.awaitClick(_.canvas.width / 2 - 332 / 3, _.canvas.height / 2 - 129 / 3 + 130, 332 / 1.5, 129 / 1.5)
-  $.unmount(title)
-  $.unmount(subtitle)
-  $.unmount(startButton)
+  $.awaitClick(_.canvas.width / 2 - 332 / 3, _.canvas.height / 2 - 129 / 3 + 130, 332 / 1.5, 129 / 1.5, () => {
+    $.play(new Scenario(($, _) => {
+      $.unmount(title)
+      $.unmount(subtitle)
+      $.unmount(startButton)
+    }))
+  })
 })
-
-
 
 // Play scenario
 const canvas = document.getElementById('canvas')

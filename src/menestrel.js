@@ -20,20 +20,24 @@ export class Scenario {
 
     this.$ = {
       mount: actor => {
-        this.queue.push(() => {
+        this.queue.push((_, actorsBinarySearchTree) => {
           console.log('mounting')
 
-          this.addActor(actor)
+          actor.animationStartTime = Date.now()
+          actorsBinarySearchTree.insert(
+            typeof actor.zIndex === 'number' ? actor.zIndex : this.actorsBinarySearchTree.size,
+            actor
+          )
 
           return Promise.resolve()
         })
       },
 
       unmount: actor => {
-        this.queue.push(() => {
+        this.queue.push((_, actorsBinarySearchTree) => {
           console.log('unmounting')
 
-          this.removeActor(actor)
+          actorsBinarySearchTree.remove(actor)
 
           return Promise.resolve()
         })
@@ -66,22 +70,20 @@ export class Scenario {
           return Promise.resolve(fn())
         })
       },
+
+      play: scenario => {
+        this.queue.push((_, actorsBinarySearchTree) => {
+          console.log('play')
+
+          scenario.stepsFunction(scenario.$, _)
+
+          return Promise.resolve(scenario.run(_, actorsBinarySearchTree))
+        })
+      }
     }
   }
 
-  addActor(actor) {
-    actor.animationStartTime = Date.now()
-    this.actorsBinarySearchTree.insert(
-      typeof actor.zIndex === 'number' ? actor.zIndex : this.actorsBinarySearchTree.size,
-      actor
-    )
-  }
-
-  removeActor(actor) {
-    this.actorsBinarySearchTree.remove(actor)
-  }
-
-  run(_) {
+  run(_, actorsBinarySearchTree) {
     let promise = Promise.resolve()
 
     const runStep = () => {
@@ -91,13 +93,13 @@ export class Scenario {
         nextStep = this.queue.shift()
 
         if (typeof nextStep === 'function') {
-          promise = nextStep(_)
+          promise = nextStep(_, actorsBinarySearchTree)
         }
       }
 
       _.clearRect(0, 0, _.canvas.width, _.canvas.height)
 
-      this.actorsBinarySearchTree.traverse(actor => {
+      actorsBinarySearchTree.traverse(actor => {
         const diffTime = Date.now() - actor.animationStartTime
 
         if (diffTime >= actor.animationDuration) {
@@ -120,8 +122,9 @@ export class Scenario {
 
 export function menestrel(canvas, scenario) {
   const _ = canvas.getContext('2d')
+  const actors = new BinarySearchTree()
 
   scenario.stepsFunction(scenario.$, _)
 
-  return scenario.run(_)
+  return scenario.run(_, actors)
 }
